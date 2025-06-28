@@ -1,31 +1,76 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GymGenius</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f0f0f;
-      color: #f2f2f2;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      flex-direction: column;
-    }
-    h1 {
-      color: #00ff88;
-    }
-    p {
-      color: #ccc;
-    }
-  </style>
-</head>
-<body>
-  <h1>🧠 GymGenius</h1>
-  <p>Tu inteligencia artificial para rutinas personalizadas está en camino...</p>
-</body>
-</html>
+// GYMGENIUS - Página web con IA generadora de rutinas
+
+import React, { useState } from "react"; import { Card, CardContent } from "@/components/ui/card"; import { Button } from "@/components/ui/button"; import { Input } from "@/components/ui/input"; import { motion } from "framer-motion";
+
+const questions = [ "¿Cuántos días a la semana puedes entrenar?", "¿Dónde entrenas normalmente? (casa, gimnasio, parque, etc.)", "¿Qué equipamiento tienes disponible?", "¿Cuál es tu objetivo principal? (hipertrofia, resistencia, potencia, pérdida de grasa)", "¿Tienes alguna lesión o limitación física?", ];
+
+const App = () => { const [step, setStep] = useState(0); const [answers, setAnswers] = useState(Array(questions.length).fill("")); const [routine, setRoutine] = useState(null);
+
+const handleNext = () => { if (step < questions.length - 1) { setStep(step + 1); } else { generarRutina(); } };
+
+const handleChange = (e) => { const newAnswers = [...answers]; newAnswers[step] = e.target.value; setAnswers(newAnswers); };
+
+const generarRutina = () => { // Lógica base para generar rutina según respuestas const lugar = answers[1].toLowerCase(); const objetivo = answers[3].toLowerCase(); const dias = parseInt(answers[0]);
+
+let rutina = [];
+
+if (objetivo.includes("hipertrofia")) {
+  rutina.push("Día 1: Pecho y tríceps (press banca, fondos, aperturas)");
+  rutina.push("Día 2: Espalda y bíceps (dominadas, remo, curl)");
+  rutina.push("Día 3: Piernas (sentadillas, zancadas, peso muerto)");
+  if (dias >= 4) rutina.push("Día 4: Hombros + core");
+  if (dias >= 5) rutina.push("Día 5: Full body explosivo");
+} else if (objetivo.includes("resistencia")) {
+  rutina.push("Día 1: Circuito funcional");
+  rutina.push("Día 2: Cardio HIIT");
+  rutina.push("Día 3: Tren inferior + core");
+}
+// Otras variantes posibles...
+
+setRoutine(rutina);
+
+};
+
+return ( <div className="min-h-screen bg-gray-100 p-4 flex flex-col items-center justify-center"> <h1 className="text-4xl font-bold mb-6 text-center">GYMGENIUS</h1>
+
+{!routine ? (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="w-full max-w-xl"
+    >
+      <Card className="p-6 shadow-xl rounded-2xl">
+        <CardContent>
+          <h2 className="text-xl font-semibold mb-4">{questions[step]}</h2>
+          <Input
+            placeholder="Tu respuesta..."
+            value={answers[step]}
+            onChange={handleChange}
+            className="mb-4"
+          />
+          <Button onClick={handleNext}>Siguiente</Button>
+        </CardContent>
+      </Card>
+    </motion.div>
+  ) : (
+    <div className="w-full max-w-2xl">
+      <h2 className="text-2xl font-bold mb-4 text-center">Tu rutina personalizada</h2>
+      <ul className="space-y-3">
+        {routine.map((dia, idx) => (
+          <li key={idx} className="bg-white p-4 rounded-lg shadow">
+            {dia}
+          </li>
+        ))}
+      </ul>
+      <Button className="mt-6" onClick={() => window.print()}>
+        Descargar rutina
+      </Button>
+    </div>
+  )}
+</div>
+
+); };
+
+export default App;
+
+  
