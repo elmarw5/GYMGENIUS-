@@ -1,76 +1,123 @@
-// GYMGENIUS - Página web con IA generadora de rutinas
+<!DOCTYPE html><html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GymGenius - Tu Rutina Perfecta</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      background-color: #1e293b;
+      width: 100%;
+      padding: 1rem;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #38bdf8;
+    }
+    .chat-container {
+      max-width: 600px;
+      width: 100%;
+      margin-top: 2rem;
+      background-color: #1e293b;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 0 10px #0ea5e9;
+    }
+    .messages {
+      height: 400px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .message {
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      background-color: #334155;
+      max-width: 80%;
+    }
+    .user {
+      align-self: flex-end;
+      background-color: #38bdf8;
+      color: black;
+    }
+    .bot {
+      align-self: flex-start;
+    }
+    form {
+      display: flex;
+      margin-top: 1rem;
+    }
+    input[type="text"] {
+      flex-grow: 1;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 10px 0 0 10px;
+    }
+    button {
+      padding: 0.75rem 1rem;
+      border: none;
+      background-color: #38bdf8;
+      color: black;
+      font-weight: bold;
+      border-radius: 0 10px 10px 0;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>GYMGENIUS 💪 - Rutinas con IA</header>
+  <div class="chat-container">
+    <div class="messages" id="chat"></div>
+    <form id="chatForm">
+      <input type="text" id="userInput" placeholder="Escribe tu objetivo: 'quiero ganar masa muscular'..." required />
+      <button type="submit">Enviar</button>
+    </form>
+  </div>  <script>
+    const chat = document.getElementById('chat');
+    const form = document.getElementById('chatForm');
+    const input = document.getElementById('userInput');
 
-import React, { useState } from "react"; import { Card, CardContent } from "@/components/ui/card"; import { Button } from "@/components/ui/button"; import { Input } from "@/components/ui/input"; import { motion } from "framer-motion";
+    const respuestasSimuladas = {
+      'masa muscular': 'Perfecto, te recomiendo una rutina de 5 días con ejercicios como sentadillas, press banca y dominadas. Aquí tienes un ejemplo:\n📌 Día 1: Piernas\n📌 Día 2: Pecho\n📌 Día 3: Espalda\n📌 Día 4: Hombros\n📌 Día 5: Brazos\n💡 Recuerda añadir sobrecarga progresiva. ¿Dónde entrenas?',
+      'casa': 'Si entrenas en casa, dime qué equipo tienes: mancuernas, barra, bandas elásticas... ¡y te adapto la rutina!',
+      'pesas': 'Perfecto. Añadiré una rutina con ejercicios compuestos como peso muerto, sentadillas, y remo con barra. ¿Cuántos días puedes entrenar a la semana?',
+    };
 
-const questions = [ "¿Cuántos días a la semana puedes entrenar?", "¿Dónde entrenas normalmente? (casa, gimnasio, parque, etc.)", "¿Qué equipamiento tienes disponible?", "¿Cuál es tu objetivo principal? (hipertrofia, resistencia, potencia, pérdida de grasa)", "¿Tienes alguna lesión o limitación física?", ];
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const texto = input.value;
+      mostrarMensaje(texto, 'user');
+      responderIA(texto);
+      input.value = '';
+    });
 
-const App = () => { const [step, setStep] = useState(0); const [answers, setAnswers] = useState(Array(questions.length).fill("")); const [routine, setRoutine] = useState(null);
+    function mostrarMensaje(msg, tipo) {
+      const div = document.createElement('div');
+      div.className = `message ${tipo}`;
+      div.innerText = msg;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
 
-const handleNext = () => { if (step < questions.length - 1) { setStep(step + 1); } else { generarRutina(); } };
-
-const handleChange = (e) => { const newAnswers = [...answers]; newAnswers[step] = e.target.value; setAnswers(newAnswers); };
-
-const generarRutina = () => { // Lógica base para generar rutina según respuestas const lugar = answers[1].toLowerCase(); const objetivo = answers[3].toLowerCase(); const dias = parseInt(answers[0]);
-
-let rutina = [];
-
-if (objetivo.includes("hipertrofia")) {
-  rutina.push("Día 1: Pecho y tríceps (press banca, fondos, aperturas)");
-  rutina.push("Día 2: Espalda y bíceps (dominadas, remo, curl)");
-  rutina.push("Día 3: Piernas (sentadillas, zancadas, peso muerto)");
-  if (dias >= 4) rutina.push("Día 4: Hombros + core");
-  if (dias >= 5) rutina.push("Día 5: Full body explosivo");
-} else if (objetivo.includes("resistencia")) {
-  rutina.push("Día 1: Circuito funcional");
-  rutina.push("Día 2: Cardio HIIT");
-  rutina.push("Día 3: Tren inferior + core");
-}
-// Otras variantes posibles...
-
-setRoutine(rutina);
-
-};
-
-return ( <div className="min-h-screen bg-gray-100 p-4 flex flex-col items-center justify-center"> <h1 className="text-4xl font-bold mb-6 text-center">GYMGENIUS</h1>
-
-{!routine ? (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="w-full max-w-xl"
-    >
-      <Card className="p-6 shadow-xl rounded-2xl">
-        <CardContent>
-          <h2 className="text-xl font-semibold mb-4">{questions[step]}</h2>
-          <Input
-            placeholder="Tu respuesta..."
-            value={answers[step]}
-            onChange={handleChange}
-            className="mb-4"
-          />
-          <Button onClick={handleNext}>Siguiente</Button>
-        </CardContent>
-      </Card>
-    </motion.div>
-  ) : (
-    <div className="w-full max-w-2xl">
-      <h2 className="text-2xl font-bold mb-4 text-center">Tu rutina personalizada</h2>
-      <ul className="space-y-3">
-        {routine.map((dia, idx) => (
-          <li key={idx} className="bg-white p-4 rounded-lg shadow">
-            {dia}
-          </li>
-        ))}
-      </ul>
-      <Button className="mt-6" onClick={() => window.print()}>
-        Descargar rutina
-      </Button>
-    </div>
-  )}
-</div>
-
-); };
-
-export default App;
-
-  
+    function responderIA(texto) {
+      let respuesta = '¡Gracias por tu mensaje! Estoy creando tu rutina...';
+      for (const clave in respuestasSimuladas) {
+        if (texto.toLowerCase().includes(clave)) {
+          respuesta = respuestasSimuladas[clave];
+          break;
+        }
+      }
+      setTimeout(() => mostrarMensaje(respuesta, 'bot'), 1000);
+    }
+  </script></body>
+</html>
