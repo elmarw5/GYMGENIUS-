@@ -1,0 +1,123 @@
+<!DOCTYPE html><html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GymGenius - Tu Rutina Perfecta</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      background-color: #1e293b;
+      width: 100%;
+      padding: 1rem;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #38bdf8;
+    }
+    .chat-container {
+      max-width: 600px;
+      width: 100%;
+      margin-top: 2rem;
+      background-color: #1e293b;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 0 10px #0ea5e9;
+    }
+    .messages {
+      height: 400px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .message {
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      background-color: #334155;
+      max-width: 80%;
+    }
+    .user {
+      align-self: flex-end;
+      background-color: #38bdf8;
+      color: black;
+    }
+    .bot {
+      align-self: flex-start;
+    }
+    form {
+      display: flex;
+      margin-top: 1rem;
+    }
+    input[type="text"] {
+      flex-grow: 1;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 10px 0 0 10px;
+    }
+    button {
+      padding: 0.75rem 1rem;
+      border: none;
+      background-color: #38bdf8;
+      color: black;
+      font-weight: bold;
+      border-radius: 0 10px 10px 0;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>GYMGENIUS 💪 - Rutinas con IA</header>
+  <div class="chat-container">
+    <div class="messages" id="chat"></div>
+    <form id="chatForm">
+      <input type="text" id="userInput" placeholder="Escribe tu objetivo: 'quiero ganar masa muscular'..." required />
+      <button type="submit">Enviar</button>
+    </form>
+  </div>  <script>
+    const chat = document.getElementById('chat');
+    const form = document.getElementById('chatForm');
+    const input = document.getElementById('userInput');
+
+    const respuestasSimuladas = {
+      'masa muscular': 'Perfecto, te recomiendo una rutina de 5 días con ejercicios como sentadillas, press banca y dominadas. Aquí tienes un ejemplo:\n📌 Día 1: Piernas\n📌 Día 2: Pecho\n📌 Día 3: Espalda\n📌 Día 4: Hombros\n📌 Día 5: Brazos\n💡 Recuerda añadir sobrecarga progresiva. ¿Dónde entrenas?',
+      'casa': 'Si entrenas en casa, dime qué equipo tienes: mancuernas, barra, bandas elásticas... ¡y te adapto la rutina!',
+      'pesas': 'Perfecto. Añadiré una rutina con ejercicios compuestos como peso muerto, sentadillas, y remo con barra. ¿Cuántos días puedes entrenar a la semana?',
+    };
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const texto = input.value;
+      mostrarMensaje(texto, 'user');
+      responderIA(texto);
+      input.value = '';
+    });
+
+    function mostrarMensaje(msg, tipo) {
+      const div = document.createElement('div');
+      div.className = `message ${tipo}`;
+      div.innerText = msg;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function responderIA(texto) {
+      let respuesta = '¡Gracias por tu mensaje! Estoy creando tu rutina...';
+      for (const clave in respuestasSimuladas) {
+        if (texto.toLowerCase().includes(clave)) {
+          respuesta = respuestasSimuladas[clave];
+          break;
+        }
+      }
+      setTimeout(() => mostrarMensaje(respuesta, 'bot'), 1000);
+    }
+  </script></body>
+</html>
